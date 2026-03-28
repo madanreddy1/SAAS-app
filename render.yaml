@@ -1,0 +1,38 @@
+# Render Blueprint: Web Service + Postgres
+# Dashboard → New → Blueprint → connect repo → use this file, or paste into render.yaml
+#
+# Python version: pinned via runtime.txt in repo root.
+#
+# After deploy: set Render env CORS_ORIGINS to your Vercel URL(s), then set
+# Vercel VITE_API_URL to this service URL (no trailing slash, no /api suffix).
+
+databases:
+  - name: workspace-db
+    plan: free
+    databaseName: workspace
+    user: workspace
+
+services:
+  - type: web
+    name: workspace-api
+    runtime: python
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: workspace-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      # Required for browser access from Vercel (comma-separated, no trailing slashes):
+      #   https://your-app.vercel.app
+      # Add preview URLs if needed, or set CORS_ALLOW_VERCEL=true for any *.vercel.app.
+      - key: CORS_ORIGINS
+        sync: false
+      # Optional: set to true to allow all https://*.vercel.app (previews). Default off.
+      - key: CORS_ALLOW_VERCEL
+        sync: false
