@@ -32,11 +32,7 @@ Until step 4 is done, the site may load but **login/API calls can fail** in the 
 3. Apply the blueprint. Render creates:
    - Postgres `workspace-db`
    - Web service `workspace-api` with `DATABASE_URL` and a generated `SECRET_KEY`
-4. Open the web service → **Environment** and set **`CORS_ORIGINS`** to your Vercel production URL (and any other exact origins you need), for example:
-   - `https://my-app.vercel.app`
-   - No trailing slash; multiple URLs = comma-separated.
-5. (Optional) Set **`CORS_ALLOW_VERCEL=true`** if you want **all** `https://*.vercel.app` previews allowed without listing each URL. Leave unset for stricter CORS (recommended for production).
-6. **Redeploy** the web service after changing env vars.
+4. The Blueprint sets **`CORS_ALLOW_VERCEL=true`** so any `https://*.vercel.app` can call the API (no empty “Enter value” fields). For stricter production CORS later: add **`CORS_ORIGINS`** in **Environment**, set **`CORS_ALLOW_VERCEL`** to `false`, and redeploy.
 
 ### Option B: Manual
 
